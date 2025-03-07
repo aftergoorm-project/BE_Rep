@@ -1,5 +1,6 @@
 package com.shop.pj.domain.jpa.user.entity;
 
+import com.shop.pj.global.entity.Status;
 import jakarta.persistence.*;
 import lombok.*;
 
