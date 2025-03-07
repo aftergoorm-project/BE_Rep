@@ -1,11 +1,20 @@
 package com.shop.pj.domain.jpa.user.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.Objects;
 
 @Entity
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@Builder
 public class User {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long userid;
 
@@ -15,7 +24,7 @@ public class User {
 
     private String email;
 
-    private String password;
+    private String password; // 암호화된 비밀번호 저장
 
     private String profileImage;
 
@@ -25,16 +34,20 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    // 비밀번호 일치 여부 확인
+    public boolean isPasswordValid(String rawPassword) {
+        return Objects.equals(this.password, rawPassword);
+    }
 
-    // ----- 메서드 ----- //
+    // 비밀번호 암호화 후 생성
     public static User user(String nickname, String email, String password) {
-        User user = new User();
-        user.nickname = nickname;
-        user.email = email;
-        user.password = password;
-        user.profileImage = null;
-        user.role = Role.ADMIN;
-        user.status = Status.ACTIVE;
-        return user;
+        return User.builder()
+                .nickname(nickname)
+                .email(email)
+                .password(password)
+                .profileImage(null)
+                .role(Role.ADMIN)
+                .status(Status.ACTIVE)
+                .build();
     }
 }
