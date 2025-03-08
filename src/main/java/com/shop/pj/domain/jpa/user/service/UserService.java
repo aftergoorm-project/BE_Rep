@@ -5,7 +5,6 @@ import com.shop.pj.domain.jpa.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 
 @Service
@@ -23,7 +22,14 @@ public class UserService {
             throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
         }
 
-        User user = User.createUser(nickname, email, rawPassword, passwordEncoder);
+        // 비밀번호 암호화 후 User 객체 생성
+        String encodedPassword = passwordEncoder.encode(rawPassword);
+        User user = User.builder()
+                .nickname(nickname)
+                .email(email)
+                .password(encodedPassword)
+                .build();
+
         return userRepository.save(user);
     }
 
@@ -38,6 +44,6 @@ public class UserService {
      * 비밀번호 검증
      */
     public boolean validatePassword(User user, String rawPassword) {
-        return user.isPasswordValid(rawPassword, passwordEncoder);
+        return passwordEncoder.matches(rawPassword, user.getPassword());
     }
 }
